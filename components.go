@@ -26,6 +26,7 @@ const (
 	SeparatorComponent             ComponentType = 14
 	ContainerComponent             ComponentType = 17
 	LabelComponent                 ComponentType = 18
+	FileUploadComponent            ComponentType = 19
 )
 
 // MessageComponent is a base interface for all message components.
@@ -74,6 +75,8 @@ func (umc *unmarshalableMessageComponent) UnmarshalJSON(src []byte) error {
 		umc.MessageComponent = &Container{}
 	case LabelComponent:
 		umc.MessageComponent = &Label{}
+	case FileUploadComponent:
+		umc.MessageComponent = &FileUpload{}
 	default:
 		return fmt.Errorf("unknown component type: %d", v.Type)
 	}
@@ -655,5 +658,29 @@ func (l Label) MarshalJSON() ([]byte, error) {
 	}{
 		label: label(l),
 		Type:  l.Type(),
+	})
+}
+
+type FileUpload struct {
+	ID        int    `json:"id,omitempty"`
+	CustomID  string `json:"custom_id"`
+	MinValues int    `json:"min_values,omitempty"`
+	MaxValues int    `json:"max_values,omitempty"`
+	Required  bool   `json:"required"`
+}
+
+func (FileUpload) Type() ComponentType {
+	return FileUploadComponent
+}
+
+func (f FileUpload) MarshalJSON() ([]byte, error) {
+	type fileUpload FileUpload
+
+	return Marshal(struct {
+		fileUpload
+		Type ComponentType `json:"type"`
+	}{
+		fileUpload: fileUpload(f),
+		Type:       f.Type(),
 	})
 }
