@@ -667,6 +667,9 @@ type FileUpload struct {
 	MinValues int    `json:"min_values,omitempty"`
 	MaxValues int    `json:"max_values,omitempty"`
 	Required  bool   `json:"required"`
+
+	// only present in response, corresponds to resolve values
+	Values []string `json:"values,omitempty"`
 }
 
 func (FileUpload) Type() ComponentType {
